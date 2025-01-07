@@ -99,7 +99,7 @@ const HomePage = () => {
 
       {/* Main Content */}
       <div className="flex-1 p-8 relative">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-8 mt-6">
           <h1 className="text-2xl font-semibold">Today</h1>
           <div className="flex items-center space-x-4">
             <button className="p-2 hover:bg-gray-100 rounded-lg">

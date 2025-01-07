@@ -43,7 +43,7 @@ const UpcomingPage = () => {
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-8 mt-6">
         <h1 className="text-2xl font-semibold mb-6">Upcoming Tasks</h1>
 
         {/* Task List */}
@@ -56,16 +56,16 @@ const UpcomingPage = () => {
             currentTasks.map((task) => (
               <div
                 key={task.id}
-                className="flex justify-between items-center p-4 bg-gray-100 rounded-md shadow-sm"
+                className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 bg-gray-100 rounded-md shadow-sm"
               >
-                <div>
+                <div className="mb-2 md:mb-0">
                   <span className="font-medium">{task.text}</span> -{' '}
                   <span className="text-sm text-gray-500">Due: {task.dueDate}</span>
                 </div>
-                <div className="ml-auto">
+                <div className="w-full md:w-auto">
                   <button
                     onClick={() => setSelectedTask(task)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    className="w-full md:w-auto px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                   >
                     View Details
                   </button>
