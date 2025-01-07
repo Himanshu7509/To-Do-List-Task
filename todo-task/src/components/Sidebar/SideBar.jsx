@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Bell, Calendar, Layout, Hash, Plus, Menu } from "lucide-react";
 import { auth } from "../../firebase";
@@ -26,6 +26,8 @@ const Sidebar = ({
       })
       .catch((err) => alert(err.message));
   };
+
+ 
 
   return (
     <div>

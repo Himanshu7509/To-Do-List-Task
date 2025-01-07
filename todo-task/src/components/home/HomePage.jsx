@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar, X } from 'lucide-react';
 import { db, auth } from '../../firebase';
 import { ref, set, push, onValue, update, remove } from 'firebase/database';
+import { onAuthStateChanged } from 'firebase/auth';
 
 import Sidebar from '../Sidebar/SideBar';
 
@@ -20,6 +21,16 @@ const HomePage = () => {
   const tasksPerPage = 4;
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigate("/");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   useEffect(() => {
     const tasksRef = ref(db, 'tasks');

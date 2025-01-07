@@ -2,12 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { db, auth } from '../../firebase'; // Firebase setup
 import { ref, onValue } from 'firebase/database';
 import Sidebar from '../Sidebar/SideBar';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 const UpcomingPage = () => {
   const [upcomingTasks, setUpcomingTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null); // State for the task to display in the modal
   const [currentPage, setCurrentPage] = useState(1);
   const tasksPerPage = 5; // Number of tasks per page
+  const navigate = useNavigate();
+
+  useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          navigate("/");
+        }
+      });
+  
+      return () => unsubscribe();
+    }, [navigate]);
 
   // Fetch upcoming tasks from Firebase on component mount
   useEffect(() => {
