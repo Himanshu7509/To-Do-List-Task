@@ -18,9 +18,11 @@ const HomePage = () => {
   const [dueDate, setDueDate] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [userId, setUserId] = useState(null); // Store user ID
   const tasksPerPage = 4;
 
   const navigate = useNavigate();
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -33,7 +35,7 @@ const HomePage = () => {
   }, [navigate]);
 
   useEffect(() => {
-    const tasksRef = ref(db, 'tasks');
+    const tasksRef = ref(db, `tasks/${userId}`);
     onValue(tasksRef, (snapshot) => {
       const tasksData = snapshot.val();
       if (tasksData) {
@@ -50,7 +52,7 @@ const HomePage = () => {
 
   const addTask = (text, description, date) => {
     if (text.trim()) {
-      const newTaskRef = push(ref(db, 'tasks'));
+      const newTaskRef = push(ref(db, `tasks/${userId}`));
       set(newTaskRef, {
         text,
         description,
@@ -66,12 +68,12 @@ const HomePage = () => {
   };
 
   const toggleCompletion = (taskId, completed) => {
-    const taskRef = ref(db, 'tasks/' + taskId);
+    const taskRef = ref(db, `tasks/${userId}/${taskId}`);
     update(taskRef, { completed: !completed });
   };
 
   const editTask = (taskId, newText, newDescription, newDate) => {
-    const taskRef = ref(db, 'tasks/' + taskId);
+    const taskRef = ref(db, `tasks/${userId}/${taskId}`);
     update(taskRef, { text: newText, description: newDescription, dueDate: newDate }).then(() => {
       setEditingTask(null);
       setEditedTaskText('');
@@ -81,7 +83,7 @@ const HomePage = () => {
   };
 
   const deleteTask = (taskId) => {
-    const taskRef = ref(db, 'tasks/' + taskId);
+    const taskRef = ref(db, `tasks/${userId}/${taskId}`);
     remove(taskRef);
   };
 
