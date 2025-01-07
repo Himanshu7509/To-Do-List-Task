@@ -65,7 +65,7 @@ const UpcomingPage = () => {
                 <div className="w-full md:w-auto">
                   <button
                     onClick={() => setSelectedTask(task)}
-                    className="w-full md:w-auto px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    className="w-full md:w-auto px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-500"
                   >
                     View Details
                   </button>
