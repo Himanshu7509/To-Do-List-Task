@@ -15,7 +15,9 @@ const Sidebar = ({
   const isUpcomingPage = location.pathname === "/upcoming";
   const isTodayPage = location.pathname === "/home";
   const isFilterPage = location.pathname === "/filter";
-  const isCompletedPage = location.pathname === '/completed'
+  const isLabelPage = location.pathname === "/label";
+  const isCompletedPage = location.pathname === "/completed";
+
   const navigate = useNavigate();
 
   // State to toggle sidebar visibility
@@ -33,7 +35,7 @@ const Sidebar = ({
     <div>
       {/* Mobile Sidebar Toggle Button */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white text-red-600 "
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white text-red-600"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
         <Menu className="w-6 h-6" />
@@ -52,29 +54,34 @@ const Sidebar = ({
         </div>
 
         {/* Add Task Button */}
-        {!isUpcomingPage && !isFilterPage && ( // Hide the button on /filter page
-          <button
-            onClick={() => setShowAddTask(!showAddTask)} // Toggle showAddTask
-            className="flex items-center text-red-500 font-medium mb-6 hover:bg-red-50 rounded-lg px-3 py-2 w-full"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Add task
-          </button>
+        {!isUpcomingPage &&
+          !isFilterPage &&
+          !isLabelPage &&
+          !isCompletedPage && ( // Hide the button on specific pages
+            <button
+              onClick={() => setShowAddTask(!showAddTask)} // Toggle showAddTask
+              className="flex items-center text-red-500 font-medium mb-6 hover:bg-red-50 rounded-lg px-3 py-2 w-full"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Add task
+            </button>
+          )}
+
+        {/* Search - Only visible on the Today page */}
+        {isTodayPage && (
+          <div className="relative mb-6">
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-gray-300"
+            />
+          </div>
         )}
 
-        {/* Search */}
-        <div className="relative mb-6">
-          <input
-            type="text"
-            placeholder="Search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-gray-300"
-          />
-        </div>
-
         {/* Navigation Menu */}
-        <nav className="space-y-1 ">
+        <nav className="space-y-1">
           <Link
             to="/"
             className={`flex items-center text-gray-700 px-3 py-2 rounded-lg ${
@@ -82,7 +89,7 @@ const Sidebar = ({
             }`}
           >
             <Calendar className="w-5 h-5 mr-3" />
-            Inbox
+            Home
           </Link>
 
           <Link
@@ -112,7 +119,17 @@ const Sidebar = ({
             }`}
           >
             <Calendar className="w-5 h-5 mr-3" />
-            Filters 
+            Filters
+          </Link>
+
+          <Link
+            to="/label"
+            className={`flex items-center text-gray-700 px-3 py-2 rounded-lg ${
+              isLabelPage ? "bg-red-50" : "hover:bg-gray-100"
+            }`}
+          >
+            <Calendar className="w-5 h-5 mr-3" />
+            Labels
           </Link>
         </nav>
 

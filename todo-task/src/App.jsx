@@ -6,6 +6,7 @@ import UpcomingTasks from './components/Upcomming/UpComming'
 import NotFound from './components/notFound/notFound'
 import FilterAndLabel from './Filterandlabel/FilterAndLabel'
 import Completed from './components/completed/Completed'
+import Label from './components/completed/label/Label'
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Route path="/upcoming" element={<UpcomingTasks />} />
           <Route path='/completed' element={<Completed/>} />
           <Route path="/filter" element={<FilterAndLabel />} />
+          <Route path="*" element={<Label/>} />
           <Route path='/*' element={<NotFound/>}/>
         </Routes>
       </BrowserRouter>

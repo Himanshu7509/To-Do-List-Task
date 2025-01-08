@@ -5,6 +5,8 @@ import { ref, push, set, onValue, update, remove } from "firebase/database";
 import { onAuthStateChanged } from "firebase/auth";
 
 import Sidebar from "../Sidebar/SideBar";
+// Import Heroicons
+import { PencilIcon, TrashIcon } from '@heroicons/react/outline';
 
 const HomePage = () => {
   const [tasks, setTasks] = useState([]);
@@ -142,10 +144,15 @@ const HomePage = () => {
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
 
-  const filteredTasks = tasks.filter((task) =>
-    task.text.toLowerCase().includes(searchQuery.toLowerCase())
+  // Sort tasks by createdAt in descending order
+  const sortedTasks = [...tasks].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  // Filter tasks based on the search query and exclude completed tasks
+  const filteredTasks = sortedTasks.filter((task) =>
+    task.text.toLowerCase().includes(searchQuery.toLowerCase()) && !task.completed
   );
 
+  // Paginate the filtered tasks
   const currentTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -158,7 +165,6 @@ const HomePage = () => {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
-
       <div className="flex-1 p-8 relative">
         <h1 className="text-2xl font-semibold mt-6">All Tasks</h1>
         <div className="text-gray-500 mb-6">{filteredTasks.length} tasks</div>
@@ -215,7 +221,7 @@ const HomePage = () => {
                     </button>
                     <button
                       onClick={() => setEditingTask(null)}
-                      className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg"
+                      className="bg-red-500 text-white hover:bg-red-700 px-4 py-2 rounded-lg"
                     >
                       Cancel
                     </button>
@@ -242,10 +248,10 @@ const HomePage = () => {
                   }}
                   className="text-blue-500"
                 >
-                  Edit
+                  <PencilIcon className="w-5 h-5" />
                 </button>
                 <button onClick={() => deleteTask(task.id)} className="text-red-500">
-                  Delete
+                  <TrashIcon className="w-5 h-5" />
                 </button>
               </div>
             </div>
@@ -257,7 +263,7 @@ const HomePage = () => {
           {currentPage > 1 && (
             <button
               onClick={() => paginate(currentPage - 1)}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg"
+              className="px-4 py-2 bg-red-500 text-white hover:bg-red-700 rounded-lg"
             >
               Previous
             </button>
@@ -265,7 +271,7 @@ const HomePage = () => {
           {currentPage * tasksPerPage < filteredTasks.length && (
             <button
               onClick={() => paginate(currentPage + 1)}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg"
+              className="px-4 py-2 bg-red-500 text-white hover:bg-red-700 rounded-lg"
             >
               Next
             </button>
@@ -316,7 +322,7 @@ const HomePage = () => {
                   </button>
                   <button
                     onClick={() => setShowAddTask(false)}
-                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg"
+                    className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
                   >
                     Cancel
                   </button>
