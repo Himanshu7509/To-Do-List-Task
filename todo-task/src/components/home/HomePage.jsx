@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Calendar, X } from "lucide-react";
 import { db, auth } from "../../firebase";
 import { ref, push, set, onValue, update, remove } from "firebase/database";
 import { onAuthStateChanged } from "firebase/auth";
@@ -12,13 +11,17 @@ const HomePage = () => {
   const [newTaskText, setNewTaskText] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
   const [showAddTask, setShowAddTask] = useState(false);
-  const [editingTask, setEditingTask] = useState(null);
-  const [editedTaskText, setEditedTaskText] = useState("");
-  const [editedTaskDescription, setEditedTaskDescription] = useState("");
+  const [priority, setPriority] = useState("Priority 1");
   const [dueDate, setDueDate] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [userId, setUserId] = useState(null);
+
+  // State for editing
+  const [editingTask, setEditingTask] = useState(null);
+  const [editedTaskText, setEditedTaskText] = useState("");
+  const [editedTaskDescription, setEditedTaskDescription] = useState("");
+  const [editedTaskPriority, setEditedTaskPriority] = useState("Priority 1");
 
   const tasksPerPage = 4;
   const navigate = useNavigate();
@@ -74,10 +77,12 @@ const HomePage = () => {
         description,
         completed: false,
         dueDate: date || null,
+        priority,
         createdAt: new Date().toISOString(),
       });
       setNewTaskText("");
       setNewTaskDescription("");
+      setPriority("Priority 1");
       setDueDate("");
       setShowAddTask(false);
     } catch (error) {
@@ -98,7 +103,7 @@ const HomePage = () => {
   };
 
   // Edit an existing task
-  const editTask = async (taskId, newText, newDescription, newDate) => {
+  const editTask = async (taskId, newText, newDescription, newDate, newPriority) => {
     if (!userId || !newText.trim()) return;
 
     try {
@@ -107,12 +112,14 @@ const HomePage = () => {
         text: newText,
         description: newDescription,
         dueDate: newDate,
+        priority: newPriority,
         updatedAt: new Date().toISOString(),
       });
 
       setEditingTask(null);
       setEditedTaskText("");
       setEditedTaskDescription("");
+      setEditedTaskPriority("Priority 1");
       setDueDate("");
     } catch (error) {
       console.error("Error editing task:", error);
@@ -153,20 +160,21 @@ const HomePage = () => {
       />
 
       <div className="flex-1 p-8 relative">
-        <h1 className="text-2xl font-semibold">Today</h1>
+        <h1 className="text-2xl font-semibold mt-6">All Tasks</h1>
         <div className="text-gray-500 mb-6">{filteredTasks.length} tasks</div>
 
         {/* Render tasks */}
         <div className="space-y-2">
           {currentTasks.map((task) => (
-            <div key={task.id} className="flex items-center p-3 bg-white rounded-lg shadow-sm">
+            <div key={task.id} className="flex flex-col sm:flex-row items-start sm:items-center p-3 bg-white rounded-lg shadow-sm">
               <input
                 type="checkbox"
                 checked={task.completed}
                 onChange={() => toggleCompletion(task.id, task.completed)}
+                className="mb-2 sm:mb-0 sm:mr-3"
               />
               {editingTask === task.id ? (
-                <div className="flex flex-col space-y-2 ml-3">
+                <div className="flex flex-col space-y-2 w-full md:w-2/4">
                   <input
                     type="text"
                     value={editedTaskText}
@@ -186,10 +194,20 @@ const HomePage = () => {
                     onChange={(e) => setDueDate(e.target.value)}
                     className="p-2 border border-gray-200 rounded-lg"
                   />
+                  <select
+                    value={editedTaskPriority}
+                    onChange={(e) => setEditedTaskPriority(e.target.value)}
+                    className="p-2 border border-gray-200 rounded-lg"
+                  >
+                    <option>Priority 1</option>
+                    <option>Priority 2</option>
+                    <option>Priority 3</option>
+                    <option>Priority 4</option>
+                  </select>
                   <div className="flex space-x-2">
                     <button
                       onClick={() =>
-                        editTask(task.id, editedTaskText, editedTaskDescription, dueDate)
+                        editTask(task.id, editedTaskText, editedTaskDescription, dueDate, editedTaskPriority)
                       }
                       className="bg-blue-500 text-white px-4 py-2 rounded-lg"
                     >
@@ -210,6 +228,7 @@ const HomePage = () => {
                   </div>
                   <div className="text-sm text-gray-500">{task.description}</div>
                   <div className="text-sm text-gray-500">Due: {task.dueDate}</div>
+                  <div className="text-sm text-gray-500">Priority: {task.priority}</div>
                 </div>
               )}
               <div className="flex space-x-2 ml-auto">
@@ -218,6 +237,7 @@ const HomePage = () => {
                     setEditingTask(task.id);
                     setEditedTaskText(task.text);
                     setEditedTaskDescription(task.description);
+                    setEditedTaskPriority(task.priority);
                     setDueDate(task.dueDate);
                   }}
                   className="text-blue-500"
@@ -277,6 +297,16 @@ const HomePage = () => {
                   onChange={(e) => setDueDate(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded-lg"
                 />
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg"
+                >
+                  <option>Priority 1</option>
+                  <option>Priority 2</option>
+                  <option>Priority 3</option>
+                  <option>Priority 4</option>
+                </select>
                 <div className="flex space-x-4">
                   <button
                     onClick={() => addTask(newTaskText, newTaskDescription, dueDate)}

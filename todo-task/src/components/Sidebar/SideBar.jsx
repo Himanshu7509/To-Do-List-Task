@@ -14,6 +14,7 @@ const Sidebar = ({
   const location = useLocation();
   const isUpcomingPage = location.pathname === "/upcoming";
   const isTodayPage = location.pathname === "/home";
+  const isFilterPage = location.pathname === "/filter";
   const navigate = useNavigate();
 
   // State to toggle sidebar visibility
@@ -50,7 +51,7 @@ const Sidebar = ({
         </div>
 
         {/* Add Task Button */}
-        {!isUpcomingPage && (
+        {!isUpcomingPage && !isFilterPage && ( // Hide the button on /filter page
           <button
             onClick={() => setShowAddTask(!showAddTask)} // Toggle showAddTask
             className="flex items-center text-red-500 font-medium mb-6 hover:bg-red-50 rounded-lg px-3 py-2 w-full"
@@ -80,7 +81,7 @@ const Sidebar = ({
             }`}
           >
             <Calendar className="w-5 h-5 mr-3" />
-            Today
+            Inbox
           </Link>
 
           <Link
@@ -93,37 +94,27 @@ const Sidebar = ({
             Upcoming
           </Link>
 
-          <a
-            href="#"
-            className="flex items-center text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-100"
+          <Link
+            to="/filter"
+            className={`flex items-center text-gray-700 px-3 py-2 rounded-lg ${
+              isFilterPage ? "bg-red-50" : "hover:bg-gray-100"
+            }`}
           >
-            <Layout className="w-5 h-5 mr-3" />
-            Filters & Labels
-          </a>
+            <Calendar className="w-5 h-5 mr-3" />
+            Filters 
+          </Link>
+
+          <Link
+            to="/label"
+            className={`flex items-center text-gray-700 px-3 py-2 rounded-lg ${
+              isUpcomingPage ? "bg-red-50" : "hover:bg-gray-100"
+            }`}
+          >
+            <Calendar className="w-5 h-5 mr-3" />
+            Labels
+          </Link>
+
         </nav>
-
-        {/* Projects Section */}
-        <div className="mt-8">
-          <h2 className="text-gray-500 text-sm font-medium mb-2">
-            My Projects
-          </h2>
-          <div className="flex items-center text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-100">
-            <Hash className="w-5 h-5 mr-3" />
-            Home 🏡
-          </div>
-        </div>
-
-        {/* Add Team Button */}
-        <button className="flex items-center text-gray-700 mt-8 hover:bg-gray-100 rounded-lg px-3 py-2 w-full">
-          <Plus className="w-5 h-5 mr-2" />
-          Add a team
-        </button>
-
-        {/* Browse Templates */}
-        <button className="flex items-center text-gray-700 mt-2 hover:bg-gray-100 rounded-lg px-3 py-2 w-full">
-          <Layout className="w-5 h-5 mr-2" />
-          Browse templates
-        </button>
 
         <div className="absolute bottom-4 left-4">
           <button
