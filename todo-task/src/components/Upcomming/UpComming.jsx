@@ -2,29 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { db, auth } from '../../firebase'; // Firebase setup
 import { ref, onValue } from 'firebase/database';
 import Sidebar from '../Sidebar/SideBar';
-import { onAuthStateChanged } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const UpcomingPage = () => {
   const [upcomingTasks, setUpcomingTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null); // State for the task to display in the modal
   const [currentPage, setCurrentPage] = useState(1);
+  const [userId, setUserId] = useState(null); // Store the logged-in user's ID
   const tasksPerPage = 5; // Number of tasks per page
   const navigate = useNavigate();
 
   useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (!user) {
-          navigate("/");
-        }
-      });
-  
-      return () => unsubscribe();
-    }, [navigate]);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid); // Save the user ID for Firebase queries
+      } else {
+        navigate("/");
+      }
+    });
 
-  // Fetch upcoming tasks from Firebase on component mount
+    return () => unsubscribe();
+  }, [navigate]);
+
+  // Fetch upcoming tasks from Firebase when userId is available
   useEffect(() => {
-    const tasksRef = ref(db, 'tasks');
+    if (!userId) return; // Wait until userId is available
+    const tasksRef = ref(db, `tasks/${userId}`);
     onValue(tasksRef, (snapshot) => {
       const tasksData = snapshot.val();
       if (tasksData) {
@@ -41,7 +45,7 @@ const UpcomingPage = () => {
         setUpcomingTasks([]);
       }
     });
-  }, []);
+  }, [userId]);
 
   // Pagination logic
   const indexOfLastTask = currentPage * tasksPerPage;
@@ -78,7 +82,7 @@ const UpcomingPage = () => {
                 <div className="w-full md:w-auto">
                   <button
                     onClick={() => setSelectedTask(task)}
-                    className="w-full md:w-auto px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-500"
+                    className="w-full md:w-auto px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
                   >
                     View Details
                   </button>
@@ -93,7 +97,7 @@ const UpcomingPage = () => {
           {currentPage > 1 && (
             <button
               onClick={() => paginate(currentPage - 1)}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
             >
               Previous
             </button>
@@ -101,7 +105,7 @@ const UpcomingPage = () => {
           {indexOfLastTask < upcomingTasks.length && (
             <button
               onClick={() => paginate(currentPage + 1)}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
             >
               Next
             </button>
@@ -127,7 +131,7 @@ const UpcomingPage = () => {
             <div className="flex justify-end">
               <button
                 onClick={() => setSelectedTask(null)}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
               >
                 Close
               </button>

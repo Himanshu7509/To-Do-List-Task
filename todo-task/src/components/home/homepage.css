@@ -1,0 +1,11 @@
+/* Ensure sidebar is on top for mobile */
+@media (max-width: 767px) {
+    .sidebar {
+      order: 1;  /* Sidebar will appear on top of the content */
+    }
+  
+    .main-content {
+      order: 2;  /* Main content will appear below the sidebar */
+    }
+  }
+  
